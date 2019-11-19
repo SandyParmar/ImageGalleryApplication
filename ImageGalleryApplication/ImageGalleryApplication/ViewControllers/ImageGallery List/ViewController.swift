@@ -21,7 +21,7 @@ class ViewController: UIViewController,UICollectionViewDelegate,UICollectionView
     
     let dataSource = GalleryDataSource()
     
-      let alert = UIAlertController(title: "IGA", message: "", preferredStyle: .alert)
+    let alert = UIAlertController(title: "IGA", message: "", preferredStyle: .alert)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,11 +58,13 @@ class ViewController: UIViewController,UICollectionViewDelegate,UICollectionView
                         self?.collectionView.reloadData()
                     }
                 }
-                
             }
         } catch {
             print("Fetch failed")
-            self.showAlertMessage(message: "Fetch failed")
+            DispatchQueue.main.async {
+                self.showAlertMessage(message: "Fetch failed")
+            }
+            
         }
     }
     func getAllImageGallary() {
@@ -77,8 +79,10 @@ class ViewController: UIViewController,UICollectionViewDelegate,UICollectionView
                 
                 do {
                     let imageGallary =  try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as! NSArray
-                    
-                    self.save(gallaryImages: imageGallary)
+                    DispatchQueue.main.async {
+                        self.save(gallaryImages: imageGallary)
+                    }
+                   
                 } catch {
                     DispatchQueue.main.async {
                         SPIndicatorView.sharedInstance.hideActivityIndicator(uiView: self.view)
@@ -123,8 +127,7 @@ class ViewController: UIViewController,UICollectionViewDelegate,UICollectionView
             try managedContext.save()
             self.fetchDataFromDB()
         } catch {
-            print("Failed saving")
-            self.showAlertMessage(message: "Failed saving")
+        
         }
         
         DispatchQueue.main.async {
@@ -162,26 +165,19 @@ class ViewController: UIViewController,UICollectionViewDelegate,UICollectionView
     }
     
     func showAlertMessage(message:String)  {
-       
-       if let currentAlert = self.presentedViewController as? UIAlertController {
-        currentAlert.message = message
-           return
-       }
-
-            alert.message = message
-                   let okAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
-                   
-                   alert.addAction(okAction)
-                   
-                   present(alert, animated: true, completion: nil)
-        
-        
-//       if ([self.navigationController.visibleViewController isKindOfClass:[UIAlertController class]]) {
-//
-//              // UIAlertController is presenting.Here
-//
-//        }
-       
+        DispatchQueue.main.async {
+            if let currentAlert = self.presentedViewController as? UIAlertController {
+                currentAlert.message = message
+                return
+            }
+            
+            self.alert.message = message
+            let okAction = UIAlertAction(title: "Ok", style: .default, handler: nil)
+            
+            self.alert.addAction(okAction)
+            
+            self.present(self.alert, animated: true, completion: nil)
+        }
     }
     
     func hideAlertMessage()  {
