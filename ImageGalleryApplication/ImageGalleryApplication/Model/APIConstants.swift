@@ -10,6 +10,6 @@ import Foundation
 
 struct APIConstants {
     
-    static let baseAPI = "http://jsonplaceholder.typicode.com/photos123"
+    static let baseAPI = "http://jsonplaceholder.typicode.com/photos"
     
 }
